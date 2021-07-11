@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  namespace: saas
+spec:
+  replicas: 1
+  revisionHistoryLimit: 0
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      name: web-pod
+      labels:
+        app: web
+    spec:
+      containers:
+        - name: web
+          image: app-sample:dev-test
+          imagePullPolicy: Always
+          # imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          env:
+            - name: TZ
+              value: "Asia/Seoul"
+          volumeMounts:
+            # web mount01
+            - name: saas-nas-pvc01
+              mountPath: /home/web01/data
+            - name: saas-nas-pvc02
+              mountPath: /home/web02/data
+              subPath: data
+            - name: saas-nas-pvc01
+              mountPath: /home/web/application/cache/temp
+              subPath: temp
+            # web mount02
+            - name: saas-nas-pvc
+              mountPath: /home/customer/application/logs/api
+              subPath: logs/api
+            - name: saas-nas-pvc02
+              mountPath: /home/customer/data
+            - name: saas-nas-pvc
+              mountPath: /home/customer/data2
+              subPath: data2
+            # web mount03
+            - name: saas2-nas-pvc
+              mountPath: /home/ht_admin/data
+            - name: saas-nas-pvc02
+              mountPath: /home/api/data
+            - name: saas-nas-pvc02
+              mountPath: /home/api/logs
+              subPath: logs
+      imagePullSecrets:
+        - name: regcred
+      volumes:
+        - name: saas-nas-pvc
+          persistentVolumeClaim:
+            claimName: saas-nas-pvc
+        - name: saas-nas-pvc02
+          persistentVolumeClaim:
+            claimName: saas-nas-pvc02

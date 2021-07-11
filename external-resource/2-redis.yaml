@@ -1,0 +1,24 @@
+# 192.168.1.21:16379 (v6.2.3)
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-svc
+  namespace: external-resource
+spec:
+  ports:
+    - protocol: TCP
+      port: 6379
+      targetPort: 6379
+
+---
+
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: redis-svc
+  namespace: external-resource
+subsets:
+  - addresses:
+      - ip: 192.168.123.123
+    ports:
+      - port: 16379

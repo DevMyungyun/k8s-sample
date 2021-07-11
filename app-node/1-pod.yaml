@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-node
+  namespace: saas
+spec:
+  replicas: 2
+  revisionHistoryLimit: 0
+  selector:
+    matchLabels:
+      app: app-node
+  template:
+    metadata:
+      name: app-node
+      labels:
+        app: app-node
+    spec:
+      containers:
+        - name: app-node
+          image: app-node:dev-latest
+          imagePullPolicy: Always
+          # imagePullPolicy: IfNotPresent
+          env:
+            - name: TZ
+              value: Asia/Seoul
+          ports:
+            - containerPort: 75
+          command:
+            [ 'sh', '-c', 'npm install; pm2-runtime /home/pm2-app.json' ]
+      imagePullSecrets:
+        - name: regcred

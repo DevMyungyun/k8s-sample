@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-spring-svc
+  labels:
+    app: app-spring
+  namespace: saas
+spec:
+  selector:
+    app: app-spring
+  ports:
+    - name: app-spring
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+  type: ClusterIP
