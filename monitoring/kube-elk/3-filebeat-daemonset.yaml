@@ -28,7 +28,7 @@ spec:
           ]
           env:
             - name: LOGSTASH_URL
-              value: "172.27.0.4:5044"
+              value: "192.168.0.5:5044"
             - name: NODE_NAME
               valueFrom:
                 fieldRef:
