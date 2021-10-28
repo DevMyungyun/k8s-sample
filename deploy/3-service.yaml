@@ -8,11 +8,11 @@ spec:
   selector:
     app: jenkins
   ports:
-  - name: web
+  - name: http
     port: 8080
     targetPort: 8080
     protocol: TCP
-  - name: slave
-    port: 5000
-    targetPort: 5000
+  - name: jnlp
+    port: 50000
+    targetPort: 50000
     protocol: TCP
