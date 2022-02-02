@@ -26,10 +26,20 @@ spec:
                 secretKeyRef:
                   name: mysql-secret
                   key: password
+          envFrom:
+            - configMapRef:
+                name: mysql-config
           volumeMounts:
-            - name: mysql-persistent-storage
+            - name: data
               mountPath: /var/lib/mysql
+              # TODO: remote access doesn't work
+            - name: conf
+              mountPath: /etc/mysql/mysql.conf.d
       volumes:
-        - name: mysql-persistent-storage
+        - name: data
           persistentVolumeClaim:
             claimName: mysql-pvc
+        - name: conf
+          configMap:
+            name: mysql-config
+            
