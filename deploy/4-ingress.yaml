@@ -17,7 +17,7 @@ spec:
   #  - jenkins.k8s-taint.org
   #  secretName: tls-secret-jenkins
   rules:
-  - host: jenkins.k8s-taint.org
+  - host: jenkins.k8s.com
     http:
       paths:
       - path: /
