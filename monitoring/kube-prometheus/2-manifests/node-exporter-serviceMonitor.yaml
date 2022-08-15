@@ -1,6 +1,4 @@
 # 2021.04.15
-# 원본: https://github.com/prometheus-operator/kube-prometheus/blob/release-0.7/manifests/node-exporter-serviceMonitor.yaml
-# > 변경된 부분 키워드 MODIFIED-BY-HT 로 검색
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
@@ -21,8 +19,6 @@ spec:
       sourceLabels:
       - __meta_kubernetes_pod_node_name
       targetLabel: instance
-    # MODIFIED-BY-HT
-    # lens IDE (https://github.com/lensapp/lens/blob/master/troubleshooting/custom-prometheus.md)
     - action: replace
       regex: (.*)
       replacement: $1

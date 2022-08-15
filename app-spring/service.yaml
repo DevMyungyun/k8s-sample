@@ -4,7 +4,7 @@ metadata:
   name: app-spring-svc
   labels:
     app: app-spring
-  namespace: saas
+  namespace: app
 spec:
   selector:
     app: app-spring

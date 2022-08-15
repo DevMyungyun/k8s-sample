@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: app-spring
-  namespace: saas
+  namespace: app
 spec:
   replicas: 1
   revisionHistoryLimit: 0
