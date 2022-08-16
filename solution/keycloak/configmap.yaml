@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: keycloak-config
+  namespace: login
+  labels:
+    app: keycloak
+data:
+  KEYCLOAK_DATABASE_HOST: postgres-svc.database
+  # KEYCLOAK_DATABASE_PORT: '5432'
+  KEYCLOAK_DATABASE_NAME: keycloak
+  # KEYCLOAK_JDBC_PARAMS: sslmode=verify-full&connectTimeout=30000
+  # KEYCLOAK_DATABASE_SCHEMA: public
+  KEYCLOAK_ADMIN_USER: admin
+  KEYCLOAK_ADMIN_PASSWORD: admin
+  # KC_PROXY: edge
+  KEYCLOAK_EXTRA_ARGS: "-Dkeycloak.frontendUrl=https://keycloak.k8s.com/auth"
