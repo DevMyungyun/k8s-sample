@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: app-node
-  namespace: saas
+  namespace: app
 spec:
   replicas: 2
   revisionHistoryLimit: 0

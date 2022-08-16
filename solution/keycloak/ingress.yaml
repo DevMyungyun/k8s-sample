@@ -14,9 +14,9 @@ metadata:
 spec:
   tls:
     - hosts:
-      - KEYCLOAK_HOST
+      - keycloak.k8s.com
   rules:
-  - host: KEYCLOAK_HOST
+  - host: keycloak.k8s.com
     http:
       paths:
       - path: /

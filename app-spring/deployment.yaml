@@ -26,6 +26,6 @@ spec:
               value: "Asia/Seoul"
             - name: SPRING_PROFILES_ACTIVE
               value: "dev"
-          command: [ "/bin/bash", "-c", "/home/app/bin/start.sh" ]
+          command: [ "/bin/bash", "-c" ]
       imagePullSecrets:
         - name: regcred
