@@ -1,0 +1,98 @@
+# BizTalk RabbitMQ Cluster
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mq-config
+  namespace: external-resource
+data:
+  RABBITMQ_ERLANG_COOKIE: "123qwe123qwe123qwe123qwe123qwe123qwe123qwe12"
+  RABBITMQ_DEFAULT_USER: "test_user"
+  RABBITMQ_DEFAULT_PASS: "test1234!"
+  RABBITMQ_DEFAULT_VHOST: "my_message"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  # Expose the management HTTP port on each node
+  name: mq-management
+  labels:
+    app: mq
+  namespace: external-resource
+spec:
+  selector:
+    app: mq
+  ports:
+    - port: 15672
+      name: http
+      targetPort: 15672
+      nodePort: 30489
+  type: NodePort # Or LoadBalancer in production w/ proper security
+---
+apiVersion: v1
+kind: Service
+metadata:
+  # The required headless service for StatefulSets
+  name: mq
+  labels:
+    app: mq
+  namespace: external-resource
+spec:
+  selector:
+    app: mq
+  ports:
+    - port: 5672
+      name: amqp
+      targetPort: 5672
+    - port: 4369
+      name: epmd
+    - port: 25672
+      name: rabbitmq-dist
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mq
+  namespace: external-resource
+spec:
+  replicas: 3
+  serviceName: mq
+  selector:
+    matchLabels:
+      app: mq
+  template:
+    metadata:
+      labels:
+        app: mq
+    spec:
+      containers:
+        - name: mq
+          image: rabbitmq:3.8.9-management-alpine
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 15672
+            - containerPort: 5672
+            - containerPort: 4369
+            - containerPort: 25672
+          envFrom:
+            - configMapRef:
+                name: mq-config
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - /bin/sh
+                  - -c
+                  - >
+                    if [ -z "$(grep rabbitmq /etc/resolv.conf)" ]; then
+                      sed "s/^search \([^ ]\+\)/search mq.\1 \1/" /etc/resolv.conf > /etc/resolv.conf.new;
+                      cat /etc/resolv.conf.new > /etc/resolv.conf;
+                      rm /etc/resolv.conf.new;
+                    fi;
+                    until rabbitmqctl node_health_check; do sleep 1; done;
+                    if [[ "$HOSTNAME" != "mq-0" && -z "$(rabbitmqctl cluster_status | grep mq-0)" ]]; then
+                      rabbitmqctl stop_app;
+                      rabbitmqctl join_cluster rabbit@mq-0;
+                      rabbitmqctl start_app;
+                    fi;
+                    rabbitmqctl set_policy -p my_message ha-all "^.*\.ha.*" '{"ha-mode":"all", "ha-sync-mode":"automatic"}'

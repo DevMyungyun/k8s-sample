@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+  namespace: database
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - image: mysql:8.0
+          name: mysql
+          ports:
+            - containerPort: 3306
+              name: mysql
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: password
+          envFrom:
+            - configMapRef:
+                name: mysql-config
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/mysql
+              # TODO: remote access doesn't work
+            - name: conf
+              mountPath: /etc/mysql/mysql.conf.d
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: mysql-pvc
+        - name: conf
+          configMap:
+            name: mysql-config
+            

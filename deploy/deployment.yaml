@@ -1,0 +1,57 @@
+apiVersion: apps/v1 # for versions before 1.7.0 use apps/v1beta1
+kind: Deployment
+metadata:
+  name: jenkins-deployment
+  namespace: deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jenkins
+  template:
+    metadata:
+      labels:
+        app: jenkins
+    spec:
+      serviceAccountName: jenkins-admin
+      securityContext:
+        fsGroup: 1000 
+        runAsUser: 1000
+      containers:
+        - name: jenkins
+          image: jenkins/jenkins:lts
+          resources:
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
+            requests:
+              memory: "500Mi"
+              cpu: "500m"
+          ports:
+            - name: http
+              containerPort: 8080
+            - name: jnlp
+              containerPort: 50000
+          livenessProbe:
+              httpGet:
+                path: "/login"
+                port: 8080
+              initialDelaySeconds: 90
+              periodSeconds: 10
+              timeoutSeconds: 5
+              failureThreshold: 5
+          readinessProbe:
+            httpGet:
+              path: "/login"
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          volumeMounts:
+            - name: jenkins-volume
+              mountPath: /var/jenkins_home
+      volumes:
+        - name: jenkins-volume
+          persistentVolumeClaim:
+            claimName: jenkins-volume-claim

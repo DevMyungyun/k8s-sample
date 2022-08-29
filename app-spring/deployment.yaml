@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-spring
+  namespace: app
+spec:
+  replicas: 1
+  revisionHistoryLimit: 0
+  selector:
+    matchLabels:
+      app: app-spring
+  template:
+    metadata:
+      name: app-spring
+      labels:
+        app: app-spring
+    spec:
+      containers:
+        - name: app-spring
+          image: app-spring:dev-latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: TZ
+              value: "Asia/Seoul"
+            - name: SPRING_PROFILES_ACTIVE
+              value: "dev"
+          command: [ "/bin/bash", "-c" ]
+      imagePullSecrets:
+        - name: regcred

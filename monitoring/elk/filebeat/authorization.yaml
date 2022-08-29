@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: filebeat
+  namespace: monitoring
+  labels:
+    app: filebeat
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: filebeat
+  namespace: monitoring
+  labels:
+    app: filebeat
+rules:
+  - apiGroups: [""]
+    resources:
+      - namespaces
+      - pods
+    verbs:
+      - get
+      - list
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: filebeat
+roleRef:
+  kind: ClusterRole
+  name: filebeat
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+  - kind: ServiceAccount
+    name: filebeat
+    namespace: monitoring

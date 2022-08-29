@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-node-svc
+  namespace: app
+spec:
+  sessionAffinity: ClientIP
+  selector:
+    app: app-node
+  type: ClusterIP
+  ports:
+    - name: app-node
+      port: 75
+      protocol: TCP
+      targetPort: 75
