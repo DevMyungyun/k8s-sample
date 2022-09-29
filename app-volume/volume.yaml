@@ -9,7 +9,7 @@ spec:
     - ReadWriteMany
   nfs:
     server: 192.168.111.111
-    path: /home/nas01/
+    path: /home/nas/
 ---
 
 apiVersion: v1
@@ -23,14 +23,14 @@ spec:
     - ReadWriteMany
   nfs:
     server: 192.168.112.112
-    path: /home/nas02/
+    path: /home/nas/
 
 ---
 
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: app-nas-pvc
+  name: app-nas-pvc01
   namespace: app
 spec:
   accessModes:
@@ -45,7 +45,7 @@ spec:
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: app-nas-pvc
+  name: app-nas-pvc02
   namespace: app
 spec:
   accessModes:
