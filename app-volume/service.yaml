@@ -8,7 +8,7 @@ spec:
     app: web
   type: ClusterIP
   ports:
-    - name: web # 웹
+    - name: web
       port: 80
       protocol: TCP
       targetPort: 80
